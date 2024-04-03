@@ -5,6 +5,7 @@ import fr.maif.patternjava.appv1.domain.errors.ColisNonTrouve;
 import fr.maif.patternjava.appv1.domain.errors.EtatInvalide;
 import fr.maif.patternjava.appv1.domain.models.Colis;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/colis")
-public class ColisController {
+public class ColisControllerV1 {
     private final LivraisonDeColis livraisonDeColis;
 
-    public ColisController(LivraisonDeColis livraisonDeColis) {
+    public ColisControllerV1(@Qualifier("LivraisonDeColisClassic") LivraisonDeColis livraisonDeColis) {
         this.livraisonDeColis = livraisonDeColis;
     }
 
