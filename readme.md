@@ -240,8 +240,9 @@ public class Colis {
 
 Le but et de réécrire le Colis sous la forme d'une interface scellée représentant tous les états possible. 
 
-Il faudra ensuite adapter et refactorer le service `[LivraisonDeColis.java](src%2Fmain%2Fjava%2Ffr%2Fmaif%2Fpatternjava%2Fappv1%2Fdomain%2FLivraisonDeColis.java)` pour prendre en compte ce nouveau design de classe.  
+Il faudra ensuite adapter et refactorer le service `LivraisonDeColis` pour prendre en compte ce nouveau design de classe.  
 
+Le code a refactorer se trouve dans le package `fr.maif.patternjava.appv1`.
 
 ## Utiliser l'API
 
