@@ -53,11 +53,161 @@ Le record est une classe finale et ne peut pas être étendu.
 
 ### Les interfaces scellées 
 
+Le mot clé sealed permet de définir une liste finie de classes qui vont étendre une classe parente. Il peut être utilisé avec les classes, les classes abstraites ou les interfaces. 
+
+Par ex : 
+
+```java
+sealed interface Animal permits Animal.Chien, Animal.Chat {
+    record Chien(String nom) implements Animal {}
+    record Chat(String nom) implements Animal {}
+}
+```
+Dans cet exemple `permits` pourrait être homis car les sous classes sont dans le même fichier. 
+
+Les sealed classes viennent avec quelques contraintes :
+* les sous classes doivent être dans la même classe ou le même package 
+* les sous classes doivent être des classes finales (le record est final)
+
+Il est possible de définir une hierarchie en utilisant les classes abstraites ou les interfaces. 
+
+```java
+sealed interface Animal  {
+    
+    sealed interface AnimalSauvage extends Animal {}
+    
+    sealed interface AnimalDeCompagnie extends Animal {}
+    
+    record Lion(String nom) implements AnimalSauvage {}
+    
+    record Chien(String nom) implements AnimalDeCompagnie {}
+    
+    final class Chat implements AnimalDeCompagnie {
+        public String nom;
+        public Chat(String nom) {
+            this.nom = nom;
+        }
+    }
+}
+```
+
+
 ### Le pattern matching 
 
+Depuis le jdk 17, le `if (any instanceof Class)` a grandement été amélioré. 
+
+#### Le if avec instanceof 
+
+Lorsqu'on devait faire : 
+
+```java
+if (uneInstance instanceof MonObject) {
+    MonObject monObject = (MonObject) uneInstance; 
+}
+```
+
+Maintenant on peut écrire
+
+```java
+if (uneInstance instanceof MonObject monObject) {
+    
+}
+```
+
+Mais on peut aller plus loins en ajoutant des tests supplémentaire sur l'instance qui a été casté 
+
+```java
+if (uneInstance instanceof MonObject monObject && monObject.value().equals("test")) {
+    
+}
+```
+
+On peut également "destructurer" des records en plus de tester leur type 
+
+```java
+if (uneInstance instanceof Chien(var nom) && nom.equals("Médor")) {
+    
+}
+```
+
+##### le if et les classes scellées 
+
+La ou les classes scellées deviennent vraiment intéressantes c'est en les utilisant avec un if. En effet le compilateur va tester l'exhaustivité des cas et le else ne sera plus nécessaire. 
+
+```java
+if (animal instanceof Animal.Chat(var nom)) {
+
+} else if (animal instanceof Animal.Chien chien) {
+
+}
+```
+
+Un des problèmes du if c'est que ça n'est pas une expression, on ne peut donc pas faire : 
+
+```java
+String nomAnimal = if (animal instanceof Animal.Chat(var nom)) {
+    return nom;
+} else if (animal instanceof Animal.Chien(nom)) {
+    return nom;
+}
+``` 
+Heureusement il existe le switch 
+
+### le switch et le pattern matching 
+
+Le switch permet de tester plusieurs cas et de retourner une valeur. 
+
+```java
+var result = switch(monObject) {
+    case String string -> string;
+    case Integer integer -> "Entier %s".formatted(integer);
+    default -> "Inconnu";
+};
+```
+Le switch est une expression, on peut donc affecter le résultat à une variable. 
+
+Comme pour le if, on peut destructurer des records et le compilateur peut checker l'exhaustivité des cas pour les sealed class. 
+
+On peut egalement tester des conditions supplémentaires en utilisant le "guard pattern" avec le mot clé when. 
+
+Si le cas à traiter se fait sur plusieurs lignes, il faudra utiliser `yield`et non `return` pour retourner un résultat. 
+
+Tout mis bout à bout donne :
+
+```java
+String age = switch (animal) {
+    case Animal.Chat chat -> chat.nom() + "n'a pas d'age";
+    case Animal.Chien(var leNom, var ageDuChien) when ageDuChien > 18 -> leNom + " est majeur " + ageDuChien;
+    case Animal.Chien(var leNom, var ageDuChien) -> {
+        String nom = leNom + " est mineur " + ageDuChien;
+        yield nom;
+    }
+};
+```
+
+On peut aller encore plus et tester des combinaisons 
+
+```java
+// Il est possible de déclarer un record à l'intérieur d'une méthode 
+record Jai2Animaux(Animal animal1, Animal animal2) {}
+
+Animal animal2 = new Animal.Chien("Medor", 5);
+
+// Ici le compilateur va vérifier tous les cas : 
+String cas = switch (new Jai2Animaux(animal, animal2)) {
+    case Jai2Animaux(Animal.Chien chien1, Animal.Chien chien2) -> "J'ai 2 chiens";
+    case Jai2Animaux(Animal.Chat chat1, Animal.Chat chat2) -> "J'ai 2 chat";
+    case Jai2Animaux(Animal.Chien chien1, Animal.Chat chat2) -> "J'ai 1 chien et 1 chat";
+    case Jai2Animaux(Animal.Chat chat1, Animal.Chien chien2) -> "J'ai 1 chien et 1 chat";
+}
+
+```
 
 
-### Utiliser l'API
+## L'exercice 
+
+
+## Utiliser l'API
 
 ```bash 
 curl -XGET http://localhost:8080/api/v1/colis | jq 

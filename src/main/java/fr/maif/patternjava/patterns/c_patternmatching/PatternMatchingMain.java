@@ -28,8 +28,18 @@ public class PatternMatchingMain {
         String age = switch (animal) {
             case Animal.Chat chat -> chat.nom() + "n'a pas d'age";
             case Animal.Chien(var leNom, var ageDuChien) when ageDuChien > 18 -> leNom + " est majeur " + ageDuChien;
-            case Animal.Chien(var leNom, var ageDuChien) -> leNom + " est mineur " + ageDuChien;
+            case Animal.Chien(var leNom, var ageDuChien) -> {
+                String nom = leNom + " est mineur " + ageDuChien;
+                yield nom;
+            }
         };
+
+        if (animal instanceof Animal.Chat(var nom)) {
+
+        } else if (animal instanceof Animal.Chien chien) {
+
+        }
+
 
         // Pattern matching avancé
         // Définition locale d'un record
