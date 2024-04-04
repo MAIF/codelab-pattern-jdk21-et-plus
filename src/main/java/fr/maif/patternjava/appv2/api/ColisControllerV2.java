@@ -1,10 +1,8 @@
 package fr.maif.patternjava.appv2.api;
 
 import fr.maif.patternjava.appv2.domain.LivraisonDeColis;
-import fr.maif.patternjava.appv2.domain.errors.ColisNonTrouve;
-import fr.maif.patternjava.appv2.domain.errors.EtatInvalide;
-import fr.maif.patternjava.appv2.domain.models.Colis;
-import fr.maif.patternjava.appv2.domain.models.Colis.ColisExistant;
+import fr.maif.patternjava.appv2.domain.models.ColisOuErreur;
+import fr.maif.patternjava.appv2.domain.models.ColisOuErreur.ColisExistant;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
@@ -31,28 +29,28 @@ public class ColisControllerV2 {
 
 
     @PostMapping
-    public ResponseEntity<Colis> prendreEnChargeLeColis(@RequestBody @Valid Colis colis) {
-        try {
-            return ResponseEntity.ok(this.livraisonDeColis.prendreEnChargeLeColis(colis));
-        } catch (ColisNonTrouve e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ColisOuErreur> prendreEnChargeLeColis(@RequestBody @Valid ColisOuErreur.Colis colis) {
+        return switch (this.livraisonDeColis.prendreEnChargeLeColis(colis)) {
+            case ColisOuErreur.Colis colisPrisEnCharge -> ResponseEntity.ok(colisPrisEnCharge);
+            case ColisOuErreur.ColisNonTrouve colisInvalide -> ResponseEntity.notFound().build();
+            default -> ResponseEntity.internalServerError().build();
+        };
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid Colis colis) {
-        try {
-            return ResponseEntity.ok(this.livraisonDeColis.gererColis(colis));
-        } catch (ColisNonTrouve e) {
-            return ResponseEntity.notFound().build();
-        } catch (EtatInvalide e) {
-            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                    HttpStatusCode.valueOf(400),
-                    e.getMessage()
-            );
-            problemDetail.setProperty("error", e.getMessage());
-            return ResponseEntity.badRequest().body(problemDetail);
-        }
+    public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid ColisOuErreur.Colis colis) {
+        return switch (this.livraisonDeColis.gererColis(colis)) {
+            case ColisOuErreur.Colis colisGere -> ResponseEntity.ok(colisGere);
+            case ColisOuErreur.ColisNonTrouve colisInvalide -> ResponseEntity.notFound().build();
+            case ColisOuErreur.ColisInvalide colisInvalide -> {
+                ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                        HttpStatusCode.valueOf(400),
+                        colisInvalide.message()
+                );
+                problemDetail.setProperty("error", colisInvalide.message());
+                yield ResponseEntity.badRequest().body(problemDetail);
+            }
+        };
     }
 
 }

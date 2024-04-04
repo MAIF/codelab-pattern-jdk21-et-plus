@@ -1,8 +1,7 @@
 package fr.maif.patternjava.appv2.domain.impl;
 
 import fr.maif.patternjava.appv2.domain.ColisExistants;
-import fr.maif.patternjava.appv2.domain.models.Colis;
-import fr.maif.patternjava.appv2.domain.models.Colis.ColisExistant;
+import fr.maif.patternjava.appv2.domain.models.ColisOuErreur.ColisExistant;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

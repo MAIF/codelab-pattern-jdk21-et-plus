@@ -1,25 +1,45 @@
 package fr.maif.patternjava.appv2.domain.models;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
-import lombok.Data;
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(
+                value = Adresse.AdresseBtoB.class,
+                name = "AdresseBtoB"
+        ),
+        @JsonSubTypes.Type(
+                value = Adresse.AdresseBtoC.class,
+                name = "AdresseBtoC"
+        )}
+)
+public sealed interface Adresse {
+        @Builder(toBuilder = true)
+        record AdresseBtoB(
+                String ligne1,
+                String ligne2,
+                String ligne3,
+                String ligne4,
+                String ligne5,
+                String ligne6,
+                String ligne7
+        ) implements Adresse {
 
-@Data
-@Builder(toBuilder = true)
-@AllArgsConstructor
-public class Adresse {
-        @NotNull
-        public TypeAdresse type;
-        @NotNull
-        public String ligne1;
-        public String ligne2;
-        public String ligne3;
-        @NotNull
-        public String ligne4;
-        public String ligne5;
-        @NotNull
-        public String ligne6;
-        public String ligne7;
+        }
 
+        @Builder(toBuilder = true)
+        record AdresseBtoC(
+                String ligne1,
+                String ligne2,
+                String ligne3,
+                String ligne4,
+                String ligne5,
+                String ligne6,
+                String ligne7
+        ) implements Adresse {
+        }
 }

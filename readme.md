@@ -1,5 +1,60 @@
 # Illustration des patterns java 21 
 
+## Les nouveautés du jdk 
+
+### Les records 
+
+Les records sont un nouveau type de class qui permet de représenter un type produit. 
+On peut les utiliser en remplacement des traditionnels POJO, on peut également les voir comme un tuple auquel on aurait donné un nom. 
+
+Pour déclarer un record : 
+
+```java
+record Chien(String nom, Integer age) { }
+```
+
+Il est également possible de faire des choses à la construction de l'instance 
+
+```java
+record Chien(String nom, Integer age) {
+    public Chien { // ici on est pas obligé de rappeler les attributs 
+        nom = Objects.requireNonNullElse(nom, "Médor");
+        Objects.requireNonNull(age, "l'age est obligatoire");
+    }
+    
+    // On peut également écrire d'autres constructeurs 
+    public Chien(Integer age) {
+        this("Médor", age);
+    }
+}
+```
+
+Le record est immutable (les attributs sont final). Pour modifier un attribut il faudra créer une nouvelle instance : 
+
+```java
+record Chien(String nom, Integer age) {
+    public Chien nom(String nom) {
+        return new Chien(nom, age);
+    } 
+}
+```
+
+Un equals et hash code est automatiquement généré à partir de tous les attributs.
+
+Des accesseurs sont également générés :
+
+```java
+Chien medor = new Chien("Médor", 5);
+
+String nom = medor.nom();
+```
+
+Le record est une classe finale et ne peut pas être étendu. 
+
+### Les interfaces scellées 
+
+### Le pattern matching 
+
 
 
 ### Utiliser l'API
