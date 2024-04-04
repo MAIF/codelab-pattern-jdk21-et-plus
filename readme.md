@@ -199,12 +199,48 @@ String cas = switch (new Jai2Animaux(animal, animal2)) {
     case Jai2Animaux(Animal.Chat chat1, Animal.Chat chat2) -> "J'ai 2 chat";
     case Jai2Animaux(Animal.Chien chien1, Animal.Chat chat2) -> "J'ai 1 chien et 1 chat";
     case Jai2Animaux(Animal.Chat chat1, Animal.Chien chien2) -> "J'ai 1 chien et 1 chat";
-}
-
+};
 ```
 
+Petit trick rigolo pour gérer une liste, on veut "filtrer et caster" pour ne garder que les chiens :  
+
+```java
+List<Animal> animals = List.of();
+List<Animal.Chien> chiens = animals
+        .stream()
+        .flatMap(a -> switch (a) {
+            case Animal.Chien c -> Stream.of(c);
+            default -> Stream.of();
+        })
+        .toList();
+```
 
 ## L'exercice 
+
+Le but du workshop et d'utiliser les nouvelles fonctionnalités du jdk pour refactorer une application de gestion de colis. 
+
+Les colis sont représentés ainsi : 
+
+```java
+public class Colis {
+    public String reference;
+    @NotNull
+    public TypeColis type;
+    @NotNull
+    public LocalDateTime dateDEnvoi;
+    public LocalDateTime dateReception;
+    public Double latitude;
+    public Double longitude;
+    @Email
+    @NotNull
+    public String email;
+    public Adresse adresse;
+}
+```
+
+Le but et de réécrire le Colis sous la forme d'une interface scellée représentant tous les états possible. 
+
+Il faudra ensuite adapter et refactorer le service `[LivraisonDeColis.java](src%2Fmain%2Fjava%2Ffr%2Fmaif%2Fpatternjava%2Fappv1%2Fdomain%2FLivraisonDeColis.java)` pour prendre en compte ce nouveau design de classe.  
 
 
 ## Utiliser l'API
