@@ -2,6 +2,13 @@
 
 ## Les nouveautés du jdk 
 
+Le jdk 21 introduit de nouvelles fonctionnalités (record, sealed class, pattern matching) qui comme les generic ou les lambda vont impacter la façon de developper en java. 
+
+Ce workshop permet de prendre en main ces nouvelles fonctionnalités et de les mettres en oeuvre à travers des cas pratiques. 
+
+Pendant 3 heures, nous allons refactorer une application en utilisant ces nouveaux patterns pour rendre le code plus robuste et profiter un peu plus de l'aide du compilateur java. 
+
+
 ### Les records 
 
 Les records sont un nouveau type de class qui permet de représenter un type produit. 
