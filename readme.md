@@ -108,32 +108,40 @@ Depuis le jdk 17, le `if (any instanceof Class)` a grandement été amélioré.
 Lorsqu'on devait faire : 
 
 ```java
-if (uneInstance instanceof MonObject) {
-    MonObject monObject = (MonObject) uneInstance; 
+void ifMethode() {
+    if (uneInstance instanceof MonObject) {
+        MonObject monObject = (MonObject) uneInstance;
+    }
 }
 ```
 
-Maintenant on peut écrire
+Maintenant avec le "type pattern" on peut écrire
 
 ```java
-if (uneInstance instanceof MonObject monObject) {
-    
+void ifMethode() {
+    if (uneInstance instanceof MonObject monObject) {
+
+    }
 }
 ```
 
 Mais on peut aller plus loins en ajoutant des tests supplémentaire sur l'instance qui a été casté 
 
 ```java
-if (uneInstance instanceof MonObject monObject && monObject.value().equals("test")) {
-    
+void ifMethode() {
+    if (uneInstance instanceof MonObject monObject && monObject.value().equals("test")) {
+
+    }
 }
 ```
 
-On peut également "destructurer" des records en plus de tester leur type 
+On peut également "destructurer" des records avec le "Record pattern" en plus de tester leur type 
 
 ```java
-if (uneInstance instanceof Chien(var nom) && nom.equals("Médor")) {
-    
+void ifMethode() {
+    if (uneInstance instanceof Chien(var nom) && nom.equals("Médor")) {
+
+    }
 }
 ```
 
@@ -142,20 +150,24 @@ if (uneInstance instanceof Chien(var nom) && nom.equals("Médor")) {
 La ou les classes scellées deviennent vraiment intéressantes c'est en les utilisant avec un if. En effet le compilateur va tester l'exhaustivité des cas et le else ne sera plus nécessaire. 
 
 ```java
-if (animal instanceof Animal.Chat(var nom)) {
+void ifMethode() {
+    if (animal instanceof Animal.Chat(var nom)) {
 
-} else if (animal instanceof Animal.Chien chien) {
+    } else if (animal instanceof Animal.Chien chien) {
 
+    }
 }
 ```
 
 Un des problèmes du if c'est que ça n'est pas une expression, on ne peut donc pas faire : 
 
 ```java
-String nomAnimal = if (animal instanceof Animal.Chat(var nom)) {
-    return nom;
-} else if (animal instanceof Animal.Chien(nom)) {
-    return nom;
+void ifMethode() {
+    String nomAnimal = if (animal instanceof Animal.Chat(var nom)) {
+        return nom;
+    } else if (animal instanceof Animal.Chien(nom)) {
+        return nom;
+    }
 }
 ``` 
 Heureusement il existe le switch 
@@ -165,11 +177,13 @@ Heureusement il existe le switch
 Le switch permet de tester plusieurs cas et de retourner une valeur. 
 
 ```java
-var result = switch(monObject) {
-    case String string -> string;
-    case Integer integer -> "Entier %s".formatted(integer);
-    default -> "Inconnu";
-};
+void switchMethode() {
+    var result = switch (monObject) {
+        case String string -> string;
+        case Integer integer -> "Entier %s".formatted(integer);
+        default -> "Inconnu";
+    };
+}
 ```
 Le switch est une expression, on peut donc affecter le résultat à une variable. 
 
@@ -182,32 +196,38 @@ Si le cas à traiter se fait sur plusieurs lignes, il faudra utiliser `yield`et 
 Tout mis bout à bout donne :
 
 ```java
-String age = switch (animal) {
-    case Animal.Chat chat -> chat.nom() + "n'a pas d'age";
-    case Animal.Chien(var leNom, var ageDuChien) when ageDuChien > 18 -> leNom + " est majeur " + ageDuChien;
-    case Animal.Chien(var leNom, var ageDuChien) -> {
-        String nom = leNom + " est mineur " + ageDuChien;
-        yield nom;
-    }
-};
+void switchMethode() {
+    String age = switch (animal) {
+        case Animal.Chat chat -> chat.nom() + "n'a pas d'age";
+        case Animal.Chien(var leNom, var ageDuChien) when ageDuChien > 18 -> leNom + " est majeur " + ageDuChien;
+        case Animal.Chien(var leNom, var ageDuChien) -> {
+            String nom = leNom + " est mineur " + ageDuChien;
+            yield nom;
+        }
+    };
+}
 ```
 
 On peut aller encore plus et tester des combinaisons 
 
 ```java
-// Il est possible de déclarer un record à l'intérieur d'une méthode 
-record Jai2Animaux(Animal animal1, Animal animal2) {}
+void switchMethode() {
+    // Il est possible de déclarer un record à l'intérieur d'une méthode 
+    record Jai2Animaux(Animal animal1, Animal animal2) { }
 
-Animal animal2 = new Animal.Chien("Medor", 5);
+    Animal animal2 = new Animal.Chien("Medor", 5);
 
 // Ici le compilateur va vérifier tous les cas : 
-String cas = switch (new Jai2Animaux(animal, animal2)) {
-    case Jai2Animaux(Animal.Chien chien1, Animal.Chien chien2) -> "J'ai 2 chiens";
-    case Jai2Animaux(Animal.Chat chat1, Animal.Chat chat2) -> "J'ai 2 chat";
-    case Jai2Animaux(Animal.Chien chien1, Animal.Chat chat2) -> "J'ai 1 chien et 1 chat";
-    case Jai2Animaux(Animal.Chat chat1, Animal.Chien chien2) -> "J'ai 1 chien et 1 chat";
-};
+    String cas = switch (new Jai2Animaux(animal, animal2)) {
+        case Jai2Animaux(Animal.Chien chien1, Animal.Chien chien2) -> "J'ai 2 chiens";
+        case Jai2Animaux(Animal.Chat chat1, Animal.Chat chat2) -> "J'ai 2 chat";
+        case Jai2Animaux(Animal.Chien chien1, Animal.Chat chat2) -> "J'ai 1 chien et 1 chat";
+        case Jai2Animaux(Animal.Chat chat1, Animal.Chien chien2) -> "J'ai 1 chien et 1 chat";
+    };
+}
 ```
+
+### Astuces 
 
 Petit trick rigolo pour gérer une liste, on veut "filtrer et caster" pour ne garder que les chiens :  
 
@@ -220,6 +240,36 @@ List<Animal.Chien> chiens = animals
             default -> Stream.of();
         })
         .toList();
+```
+
+Voici une autre astuce pour pouvoir utiliser le switch avec un `Optional`. 
+
+D'abord on va créer un petit utilitaire : 
+
+```java
+public sealed interface Opt<T> {
+    record Present<T>(T value) implements Opt<T> {}
+    record Empty<T>() implements Opt<T> {}
+}
+```
+Ici on vient de créer une sealed interface qui prend 2 valeurs : Present ou Vide. 
+
+On va ensuite s'équiper d'une factory à partir d'un optional : 
+```java
+public static <T> Opt<T> opt(Optional<T> optional) {
+    return optional.<Opt<T>>map(Opt.Present::new).orElse(new Opt.Empty<>());
+}
+```
+
+Maintenant on peut écrire ce code : 
+
+```java
+Optional<String> stringOrVide = Optional.of("C'est pas vide");
+
+String resultat = switch (opt(stringOrVide)) {
+    case Opt.Present(var value) -> value;
+    case Opt.Empty() -> "c'est vide";
+};
 ```
 
 ## L'exercice 

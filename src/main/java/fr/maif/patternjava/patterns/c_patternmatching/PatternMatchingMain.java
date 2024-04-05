@@ -80,7 +80,5 @@ public class PatternMatchingMain {
     public sealed interface Opt<T> {
         record Present<T>(T value) implements Opt<T> {}
         record Empty<T>() implements Opt<T> {}
-
-
     }
 }
