@@ -301,6 +301,29 @@ Il faudra ensuite adapter et refactorer le service `LivraisonDeColis` pour prend
 
 Le code a refactorer se trouve dans le package `fr.maif.patternjava.appv1`.
 
+
+### Etape 1 : utilisation des records 
+
+Transformer la class `Colis` en `record`. Les tests de nullité pourront être fait dans le constructeur en utilisant `Objects.requireNonNull`.
+
+### Etape 2 : refactorer l'adresse
+
+On voit que l'adresse est soit AdresseBtoB soit AdresseBtoC. L'adresse peut donc être réécrite avec une sealed interface et des records.  
+
+### Etape 3 : refactorer le colis 
+
+A l'image de l'adresse, on voit le colis a plusieurs états. Refactorer le colis avec une hierarchie de sealed interface et de records. 
+
+### Etape 4 : adapter le service LivraisonDeColis
+
+Plus rien ne compile ! 
+
+Adapter le service pour gérer cette nouvelle hierarchie de classes. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas. 
+
+### Etape 5 : altérnative aux exceptions
+
+Et si les erreurs étaient aussi un état du colis. Modifier la hierarchie de classe pour intégrer les erreurs. Il faudra refactorer le controller pour gérer proprement les erreurs.
+
 ## Utiliser l'API
 
 ```bash 
