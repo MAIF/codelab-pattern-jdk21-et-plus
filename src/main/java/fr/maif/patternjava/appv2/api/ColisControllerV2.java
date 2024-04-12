@@ -29,10 +29,9 @@ public class ColisControllerV2 {
 
 
     @PostMapping
-    public ResponseEntity<ColisOuErreur> prendreEnChargeLeColis(@RequestBody @Valid ColisOuErreur.Colis colis) {
+    public ResponseEntity<ColisOuErreur.Colis> prendreEnChargeLeColis(@RequestBody @Valid ColisOuErreur.Colis colis) {
         return switch (this.livraisonDeColis.prendreEnChargeLeColis(colis)) {
             case ColisOuErreur.Colis colisPrisEnCharge -> ResponseEntity.ok(colisPrisEnCharge);
-            case ColisOuErreur.ColisNonTrouve _ -> ResponseEntity.notFound().build();
             default -> ResponseEntity.internalServerError().build();
         };
     }
