@@ -4,6 +4,7 @@ import fr.maif.patternjava.appv2.domain.models.ColisOuErreur;
 import fr.maif.patternjava.appv2.domain.models.ColisOuErreur.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -46,12 +47,13 @@ public class LivraisonDeColis {
         record ExistantEtAGerer(ColisExistant colisExistant, ColisExistant colisAGerer) {}
 
         return switch (new ExistantEtAGerer(colisExistant, colisAGerer)) {
-            case ExistantEtAGerer(ColisPrisEnCharge         ignored, ColisEnCoursDAcheminement colisEnCoursAGerer) -> gererColisEnCoursDAcheminement(colisEnCoursAGerer);
-            case ExistantEtAGerer(ColisEnCoursDAcheminement ignored, ColisEnCoursDAcheminement colisEnCoursAGerer) -> gererColisEnCoursDAcheminement(colisEnCoursAGerer);
-            case ExistantEtAGerer(ColisEnCoursDAcheminement ignored, ColisRecu colisEnCoursAGerer) -> gererColisRecu(colisEnCoursAGerer);
-            case ExistantEtAGerer(ColisPrisEnCharge         ignored, var ignored2) -> new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\"");
-            case ExistantEtAGerer(ColisEnCoursDAcheminement ignored, var ignored2) -> new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\" ou \"ColisPrisEnCharge\"");
-            case ExistantEtAGerer(ColisRecu                 ignored, var ignored2) -> new EtatInvalide("Le colis est déja reçu");
+            case ExistantEtAGerer(ColisPrisEnCharge         colisPrisEnCharge, ColisEnCoursDAcheminement _) when colisPrisEnCharge.dateDEnvoi().isBefore(LocalDateTime.now().minusMonths(1)) -> new EtatInvalide("La prise en charge date de plus d'1 mois");
+            case ExistantEtAGerer(ColisPrisEnCharge         _, ColisEnCoursDAcheminement colisEnCoursAGerer) -> gererColisEnCoursDAcheminement(colisEnCoursAGerer);
+            case ExistantEtAGerer(ColisEnCoursDAcheminement _, ColisEnCoursDAcheminement colisEnCoursAGerer) -> gererColisEnCoursDAcheminement(colisEnCoursAGerer);
+            case ExistantEtAGerer(ColisEnCoursDAcheminement _, ColisRecu colisEnCoursAGerer) -> gererColisRecu(colisEnCoursAGerer);
+            case ExistantEtAGerer(ColisPrisEnCharge         _, _) -> new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\"");
+            case ExistantEtAGerer(ColisEnCoursDAcheminement _, _) -> new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\" ou \"ColisPrisEnCharge\"");
+            case ExistantEtAGerer(ColisRecu                 _, _) -> new EtatInvalide("Le colis est déja reçu");
         };
     }
 

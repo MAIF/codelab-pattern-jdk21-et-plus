@@ -354,6 +354,7 @@ Les régles sont les suivantes :
      * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement`
      * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisEnCoursDAcheminement`
      * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisRecu`
+     * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement` et que la date d'envoi a dépassé 1 mois, dans ce cas il faut lever une erreur.
      * dans les autres cas : la demande est invalide 
 
 

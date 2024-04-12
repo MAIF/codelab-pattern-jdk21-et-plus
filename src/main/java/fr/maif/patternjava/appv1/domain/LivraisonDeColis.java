@@ -6,6 +6,7 @@ import fr.maif.patternjava.appv1.domain.models.Colis;
 import fr.maif.patternjava.appv1.domain.models.TypeColis;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -50,6 +51,12 @@ public class LivraisonDeColis {
             if ((colisExistant.type.equals(ColisPrisEnCharge) && colis.type.equals(ColisEnCoursDAcheminement)) ||
                 (colisExistant.type.equals(ColisEnCoursDAcheminement) && colis.type.equals(ColisEnCoursDAcheminement)) ||
                 (colisExistant.type.equals(ColisEnCoursDAcheminement) && colis.type.equals(ColisRecu))) {
+
+                if (colisExistant.type.equals(ColisPrisEnCharge) &&
+                    colisExistant.dateDEnvoi.isBefore(LocalDateTime.now().minusMonths(1))) {
+                    throw new EtatInvalide("La prise en charge date de plus d'1 mois");
+                }
+
                 return this.colisExistants.mettreAJourColis(colis);
             }
             if (colisExistant.type.equals(ColisPrisEnCharge)) {
