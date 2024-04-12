@@ -2,7 +2,10 @@ package fr.maif.patternjava.appv2.domain.models;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import org.hibernate.validator.constraints.Length;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "type"
@@ -20,26 +23,23 @@ import lombok.Builder;
 public sealed interface Adresse {
         @Builder(toBuilder = true)
         record AdresseBtoB(
-                String ligne1,
-                String ligne2,
-                String ligne3,
-                String ligne4,
-                String ligne5,
-                String ligne6,
-                String ligne7
-        ) implements Adresse {
-
-        }
+                @NotNull @Length(max = 38) String raisonSocialeOuDenomination,
+                @NotNull @Length(max = 38) String identiteDestinataireOuService,
+                @Length(max = 38) String mentionSpecialeEtCommuneGeo,
+                @Length(max = 38) String entreeBatimentImmeubleResidence,
+                @NotNull @Length(max = 38) String numeroLibelleVoie,
+                @NotNull @Length(max = 38) String codePostalEtLocaliteOuCedex,
+                @Length(max = 38) String pays
+        ) implements Adresse { }
 
         @Builder(toBuilder = true)
         record AdresseBtoC(
-                String ligne1,
-                String ligne2,
-                String ligne3,
-                String ligne4,
-                String ligne5,
-                String ligne6,
-                String ligne7
-        ) implements Adresse {
-        }
+                @NotNull @Length(max = 38) String civiliteNomPrenom,
+                @Length(max = 38) String noAppEtageCouloirEscalier,
+                @Length(max = 38) String lieuDitServiceParticulierDeDistribution,
+                @Length(max = 38) String entreeBatimentImmeubleResidence,
+                @NotNull @Length(max = 38) String numeroLibelleVoie,
+                @NotNull @Length(max = 38) String codePostalEtLocaliteOuCedex,
+                @Length(max = 38) String pays
+        ) implements Adresse { }
 }

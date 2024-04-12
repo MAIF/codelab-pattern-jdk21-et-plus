@@ -11,7 +11,11 @@ public class PatternMatchingMain {
         String nom();
 
         record Chat(String nom) implements Animal {}
-        record Chien(String nom, Integer age) implements Animal {}
+        record Chien(String nom, Integer age) implements Animal {
+            public Chien(String nom) {
+                this(nom, 42);
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -23,6 +27,12 @@ public class PatternMatchingMain {
         }
 
 
+        var chien = new Animal.Chien("medor");
+
+        if (chien instanceof Animal.Chien(var nom, _)) {
+            System.out.println(nom);
+        }
+
         // Switch avec pattern matching
         Animal animal = new Animal.Chat("Miaou");
         String age = switch (animal) {
@@ -33,12 +43,6 @@ public class PatternMatchingMain {
                 yield nom;
             }
         };
-
-        if (animal instanceof Animal.Chat(var nom)) {
-
-        } else if (animal instanceof Animal.Chien chien) {
-
-        }
 
 
         // Pattern matching avancé

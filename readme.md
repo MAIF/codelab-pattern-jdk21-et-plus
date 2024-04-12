@@ -310,19 +310,81 @@ Transformer la class `Colis` en `record`. Les tests de nullité pourront être f
 
 On voit que l'adresse est soit AdresseBtoB soit AdresseBtoC. L'adresse peut donc être réécrite avec une sealed interface et des records.  
 
+Adresse B2B :
+ * raisonSocialeOuDenomination : non null, taille 38
+ * identiteDestinataireOuService : non null, taille 38
+ * entreeBatimentImmeubleResidence : taille 38
+ * numeroLibelleVoie : non null, taille 38
+ * mentionSpecialeEtCommuneGeo : taille 38
+ * codePostalEtLocaliteOuCedex : non null, taille 38
+ * pays: taille 38
+
+Adresse B2C :
+ * civiliteNomPrenom : non null, taille 38
+ * noAppEtageCouloirEscalier : taille 38
+ * entreeBatimentImmeubleResidence : taille 38
+ * numeroLibelleVoie : non null, taille 38
+ * lieuDitServiceParticulierDeDistribution : taille 38
+ * codePostalEtLocaliteOuCedex : non null, taille 38
+ * pays : taille 38
+
 ### Etape 3 : refactorer le colis 
 
 A l'image de l'adresse, on voit le colis a plusieurs états. Refactorer le colis avec une hierarchie de sealed interface et de records. 
+
+Les règles de gestion sur le colis : 
+ * NouveauColis : email et adresse non null, adresse valide 
+ * ColisPrisEnCharge : reference, email, adresse et date d'envoi non null, adresse valide
+ * ColisEnCoursDAcheminement : reference, email, adresse, date d'envoi et latitude / longitude non null, adresse valide
+ * ColisRecu : reference, email, adresse, date d'envoi et date de reception non null, adresse valide
+
 
 ### Etape 4 : adapter le service LivraisonDeColis
 
 Plus rien ne compile ! 
 
-Adapter le service pour gérer cette nouvelle hierarchie de classes. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas. 
+Adapter le service pour gérer cette nouvelle hierarchie de classes. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas.
 
-### Etape 5 : altérnative aux exceptions
+Les régles sont les suivantes :
+ * Sur le POST : création d'un colis, le type de colis doit être `NouveauColis` 
+ * Sur le PUT : modification d'un colis :
+   * le type de colis ne pas doit être `NouveauColis`
+   * un colis doit exister pour cette référence
+   * la maj est possible si le 
+     * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement`
+     * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisEnCoursDAcheminement`
+     * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisRecu`
+     * dans les autres cas : la demande est invalide 
+
+
+### Etape 5 : alternative aux exceptions
 
 Et si les erreurs étaient aussi un état du colis. Modifier la hierarchie de classe pour intégrer les erreurs. Il faudra refactorer le controller pour gérer proprement les erreurs.
+
+### Etape 6 : Validation par des types dédiés
+
+Dans cette approche, on remplace les annotations "bean validation" par un type dédié et des validations dans le constructeur. 
+
+Par exemple :
+
+```java
+String email;
+```
+devient 
+
+```java
+Email email;
+```
+
+avec 
+
+```java
+record Email(String email) {
+    public Email {
+        // valider la regex de l'email ici et lever une exception en cas de pb 
+    }
+}
+```
 
 ## Utiliser l'API
 
@@ -338,9 +400,9 @@ curl -XPOST http://localhost:8080/api/v1/colis -H 'Content-Type:application/json
     "email": "jdusse@maif.fr",
     "adresse": {
         "type": "AdresseBtoC", 
-        "ligne1": "Jean Claude Dusse", 
-        "ligne4": "10 rue de la rue",
-        "ligne6": "79000 Niort"
+        "civiliteNomPrenom": "Jean Claude Dusse", 
+        "numeroLibelleVoie": "10 rue de la rue",
+        "pays": "79000 Niort"
     }
 }' 
 ```
@@ -353,9 +415,9 @@ curl -XPOST http://localhost:8080/api/v1/colis -H 'Content-Type:application/json
     "email": "jdussemaiffr",
     "adresse": {
         "type": "AdresseBtoC",
-        "ligne1": "Jean Claude Dusse qui habite dans une rue qui va bien finir par dépasser les 38 caractères autorisés",
-        "ligne4": "10 rue de la rue",
-        "ligne6": "79000 Niort"
+        "civiliteNomPrenom": "Jean Claude Dusse qui habite dans une rue qui va bien finir par dépasser les 38 caractères autorisés",
+        "numeroLibelleVoie": "10 rue de la rue",
+        "pays": "79000 Niort"
     }
 }' | jq
 ```
@@ -373,9 +435,9 @@ curl -XPUT http://localhost:8080/api/v2/colis/4bcdeac1-3aa7-4a7a-91a4-b5d3e40ade
     },
     "adresse": {
         "type": "AdresseBtoC", 
-        "ligne1": "Jean Claude Dusse", 
-        "ligne4": "10 rue de la rue",
-        "ligne6": "79000 Niort"
+        "civiliteNomPrenom": "Jean Claude Dusse", 
+        "numeroLibelleVoie": "10 rue de la rue",
+        "pays": "79000 Niort"
     }
 }' --include
 ```
@@ -390,9 +452,9 @@ curl -XPUT http://localhost:8080/api/colis/v2/4bcdeac1-3aa7-4a7a-91a4-b5d3e40ade
   "email": "jdusse@maif.fr",
   "adresse": {
     "type": "AdresseBtoC",
-    "ligne1": "Jean Claude Dusse",
-    "ligne4": "10 RUE DE LA RUE",
-    "ligne6": "79000 NIORT"
+    "civiliteNomPrenom": "Jean Claude Dusse",
+    "numeroLibelleVoie": "10 RUE DE LA RUE",
+    "pays": "79000 NIORT"
   }
 }' --include
 ```

@@ -29,6 +29,19 @@ public class LivraisonDeColis {
         };
     }
 
+    public ColisOuErreur gererColis(Colis colis) {
+        return switch (colis) {
+            case NouveauColis nouveauColis -> prendreEnChargeLeColis(nouveauColis);
+            case ColisExistant colisAGerer -> {
+                ColisExistant colisExistant = colisExistants.chercherColisExistantParReference(colisAGerer.reference());
+                if (Objects.isNull(colisExistant)) {
+                    yield new ColisNonTrouve(colisAGerer.reference());
+                }
+                yield gererColisExistant(colisExistant, colisAGerer);
+            }
+        };
+    }
+
     ColisOuErreur gererColisExistant(ColisExistant colisExistant, ColisExistant colisAGerer) {
         record ExistantEtAGerer(ColisExistant colisExistant, ColisExistant colisAGerer) {}
 
@@ -51,18 +64,7 @@ public class LivraisonDeColis {
         return colisExistants.mettreAJourColis(colisEnCoursAGerer);
     }
 
-    public ColisOuErreur gererColis(Colis colis) {
-        return switch (colis) {
-            case NouveauColis nouveauColis -> prendreEnChargeLeColis(nouveauColis);
-            case ColisExistant colisAGerer -> {
-                ColisExistant colisExistant = colisExistants.chercherColisExistantParReference(colisAGerer.reference());
-                if (Objects.isNull(colisExistant)) {
-                    yield  new ColisNonTrouve(colisAGerer.reference());
-                }
-                yield  gererColisExistant(colisExistant, colisAGerer);
-            }
-        };
-    }
+
 
     private String genererReference() {
         return UUID.randomUUID().toString();

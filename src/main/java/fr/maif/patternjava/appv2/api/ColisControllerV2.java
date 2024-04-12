@@ -32,7 +32,7 @@ public class ColisControllerV2 {
     public ResponseEntity<ColisOuErreur> prendreEnChargeLeColis(@RequestBody @Valid ColisOuErreur.Colis colis) {
         return switch (this.livraisonDeColis.prendreEnChargeLeColis(colis)) {
             case ColisOuErreur.Colis colisPrisEnCharge -> ResponseEntity.ok(colisPrisEnCharge);
-            case ColisOuErreur.ColisNonTrouve colisInvalide -> ResponseEntity.notFound().build();
+            case ColisOuErreur.ColisNonTrouve _ -> ResponseEntity.notFound().build();
             default -> ResponseEntity.internalServerError().build();
         };
     }
@@ -41,7 +41,7 @@ public class ColisControllerV2 {
     public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid ColisOuErreur.Colis colis) {
         return switch (this.livraisonDeColis.gererColis(colis)) {
             case ColisOuErreur.Colis colisGere -> ResponseEntity.ok(colisGere);
-            case ColisOuErreur.ColisNonTrouve colisInvalide -> ResponseEntity.notFound().build();
+            case ColisOuErreur.ColisNonTrouve _ -> ResponseEntity.notFound().build();
             case ColisOuErreur.ColisInvalide colisInvalide -> {
                 ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                         HttpStatusCode.valueOf(400),
