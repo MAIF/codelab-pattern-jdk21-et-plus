@@ -29,9 +29,10 @@ public class PatternMatchingMain {
 
         var chien = new Animal.Chien("medor");
 
-        if (chien instanceof Animal.Chien(var nom, _)) {
-            System.out.println(nom);
-        }
+        // EN jdk 22 et en activant les preview
+//        if (chien instanceof Animal.Chien(var nom, _)) {
+//            System.out.println(nom);
+//        }
 
         // Switch avec pattern matching
         Animal animal = new Animal.Chat("Miaou");

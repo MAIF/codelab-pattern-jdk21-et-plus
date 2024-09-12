@@ -1,6 +1,6 @@
-package fr.maif.patternjava.appv1.domain;
+package fr.maif.patternjava.app.domain;
 
-import fr.maif.patternjava.appv1.domain.models.Colis;
+import fr.maif.patternjava.app.domain.models.Colis;
 
 import java.util.List;
 

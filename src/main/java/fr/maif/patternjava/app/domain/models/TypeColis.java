@@ -1,4 +1,4 @@
-package fr.maif.patternjava.appv1.domain.models;
+package fr.maif.patternjava.app.domain.models;
 
 public enum TypeColis {
     NouveauColis,

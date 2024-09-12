@@ -1,4 +1,4 @@
-package fr.maif.patternjava.appv1.domain.errors;
+package fr.maif.patternjava.app.domain.errors;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;

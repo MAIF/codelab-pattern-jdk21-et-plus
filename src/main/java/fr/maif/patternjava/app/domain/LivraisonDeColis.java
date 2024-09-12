@@ -1,9 +1,9 @@
-package fr.maif.patternjava.appv1.domain;
+package fr.maif.patternjava.app.domain;
 
-import fr.maif.patternjava.appv1.domain.errors.ColisNonTrouve;
-import fr.maif.patternjava.appv1.domain.errors.EtatInvalide;
-import fr.maif.patternjava.appv1.domain.models.Colis;
-import fr.maif.patternjava.appv1.domain.models.TypeColis;
+import fr.maif.patternjava.app.domain.errors.ColisNonTrouve;
+import fr.maif.patternjava.app.domain.errors.EtatInvalide;
+import fr.maif.patternjava.app.domain.models.Colis;
+import fr.maif.patternjava.app.domain.models.TypeColis;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static fr.maif.patternjava.appv1.domain.models.TypeColis.*;
+import static fr.maif.patternjava.app.domain.models.TypeColis.*;
 
 @Component("LivraisonDeColisClassic")
 public class LivraisonDeColis {

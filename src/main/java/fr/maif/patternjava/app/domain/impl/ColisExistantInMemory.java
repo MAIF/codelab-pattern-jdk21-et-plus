@@ -1,7 +1,7 @@
-package fr.maif.patternjava.appv1.domain.impl;
+package fr.maif.patternjava.app.domain.impl;
 
-import fr.maif.patternjava.appv1.domain.ColisExistants;
-import fr.maif.patternjava.appv1.domain.models.Colis;
+import fr.maif.patternjava.app.domain.ColisExistants;
+import fr.maif.patternjava.app.domain.models.Colis;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
