@@ -165,12 +165,12 @@ Un des problèmes du if c'est que ça n'est pas une expression, on ne peut donc 
 void ifMethode() {
     String nomAnimal = if (animal instanceof Animal.Chat(var nom)) {
         return nom;
-    } else if (animal instanceof Animal.Chien(nom)) {
+    } else if (animal instanceof Animal.Chien(var nom)) {
         return nom;
     }
 }
 ``` 
-Heureusement il existe le switch 
+Heureusement, il existe le switch 
 
 ### le switch et le pattern matching 
 
@@ -198,7 +198,7 @@ Tout mis bout à bout donne :
 ```java
 void switchMethode() {
     String age = switch (animal) {
-        case Animal.Chat chat -> chat.nom() + "n'a pas d'age";
+        case Animal.Chat chat -> chat.nom() + " n'a pas d'age";
         case Animal.Chien(var leNom, var ageDuChien) when ageDuChien > 18 -> leNom + " est majeur " + ageDuChien;
         case Animal.Chien(var leNom, var ageDuChien) -> {
             String nom = leNom + " est mineur " + ageDuChien;
@@ -299,12 +299,13 @@ Le but et de réécrire le Colis sous la forme d'une interface scellée représe
 
 Il faudra ensuite adapter et refactorer le service `LivraisonDeColis` pour prendre en compte ce nouveau design de classe.  
 
-Le code a refactorer se trouve dans le package `fr.maif.patternjava.appv1`.
+Le code a refactorer se trouve dans le package `fr.maif.patternjava.app`.
 
 
 ### Etape 1 : utilisation des records 
 
-Transformer la class `Colis` en `record`. Les tests de nullité pourront être fait dans le constructeur en utilisant `Objects.requireNonNull`.
+Transformer la class `Colis` en `record`. 
+La validation sera fait iso avec les annotations. Des valeurs par défaut peuvent être mise dans le constructeur si besoin. 
 
 ### Etape 2 : refactorer l'adresse
 
@@ -328,6 +329,31 @@ Adresse B2C :
  * codePostalEtLocaliteOuCedex : non null, taille 38
  * pays : taille 38
 
+**Note importante /!\ :**
+
+Pour sérialiser / désérialiser avec Jackson, il faut un attribut qui permet de savoir comment lire le json dans le bon format. 
+Ici, on pourra utiliser l'attribut `type` qui prendra les valeurs `AdresseBtoB` et `AdresseBtoC`. 
+
+Pour faire avec Jackson, on utilisera les annotations `@JsonTypeInfo` et `@JsonSubTypes` ainsi :
+
+```java
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(
+                value = Adresse.AdresseBtoB.class,
+                name = "AdresseBtoB"
+        ),
+        @JsonSubTypes.Type(
+                value = Adresse.AdresseBtoC.class,
+                name = "AdresseBtoC"
+        )}
+)
+```
+
+
 ### Etape 3 : refactorer le colis 
 
 A l'image de l'adresse, on voit le colis a plusieurs états. Refactorer le colis avec une hierarchie de sealed interface et de records. 
@@ -338,10 +364,46 @@ Les règles de gestion sur le colis :
  * ColisEnCoursDAcheminement : reference, email, adresse, date d'envoi et latitude / longitude non null, adresse valide
  * ColisRecu : reference, email, adresse, date d'envoi et date de reception non null, adresse valide
 
+A cette étape, vous pouvez mettre en commentaire le contenu des méthodes `prendreEnChargeLeColis` et `gererColis` : 
+
+```java
+public Colis prendreEnChargeLeColis(Colis colis) throws EtatInvalide {
+    return colis;    
+}
+public Colis gererColis(Colis colis) {
+    return colis;
+}
+```
+**Tips :**
+Un colis qui n'existe pas encore n'a pas de reference, c'est le cas d'un NouveauColis. 
+
+Il est possible de gérer ça dans la hiérarchie de classes : 
+
+```mermaid
+classDiagram
+    Colis <|-- NouveauColis
+    Colis <|-- ColisExistant
+    ColisExistant <|-- ColisPrisEnCharge
+    ColisExistant <|-- ColisEnCoursDAcheminement
+    ColisExistant <|-- ColisRecu
+    ColisExistant: +String reference()
+    class ColisPrisEnCharge {
+    
+    }   
+    class ColisEnCoursDAcheminement {
+    
+    }
+    class ColisRecu {
+    
+    }
+```
+
+Comme il est maintenant possible de séparer les cas `Colis` et `ColisExistant`, le repository `ColisExistants` peut être adapté pour gérer que des `ColisExistant`.  
+
 
 ### Etape 4 : adapter le service LivraisonDeColis
 
-Plus rien ne compile ! 
+Plus rien ne compile ! Ou alors avec des lignes en commentaires
 
 Adapter le service pour gérer cette nouvelle hierarchie de classes. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas.
 
@@ -430,10 +492,8 @@ curl -XPUT http://localhost:8080/api/v2/colis/4bcdeac1-3aa7-4a7a-91a4-b5d3e40ade
     "type": "ColisEnCoursDAcheminement", 
     "email": "jdusse@maif.fr",
     "dateDEnvoi": "2021-11-08T11:59:09.933828",
-    "position": {
-        "latitude": 44,
-        "longitude": 60
-    },
+    "latitude": 44,
+    "longitude": 60,
     "adresse": {
         "type": "AdresseBtoC", 
         "civiliteNomPrenom": "Jean Claude Dusse", 
