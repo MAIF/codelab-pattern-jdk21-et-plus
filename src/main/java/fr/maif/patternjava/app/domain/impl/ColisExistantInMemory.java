@@ -19,12 +19,12 @@ public class ColisExistantInMemory implements ColisExistants {
 
     @Override
     public Colis enregistrerColis(Colis colisPrisEnCharge) {
-        return store.compute(colisPrisEnCharge.reference, (id, colisExistant) -> colisPrisEnCharge);
+        return store.compute(colisPrisEnCharge.reference(), (id, colisExistant) -> colisPrisEnCharge);
     }
 
     @Override
     public Colis mettreAJourColis(Colis colis) {
-        return store.compute(colis.reference, (id, colisExistant) -> colis);
+        return store.compute(colis.reference(), (id, colisExistant) -> colis);
     }
 
     @Override
