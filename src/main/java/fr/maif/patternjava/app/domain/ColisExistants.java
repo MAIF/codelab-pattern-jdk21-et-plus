@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface ColisExistants {
 
-    Colis chercherColisExistantParReference(String referenceColis);
+    Colis.ColisExistant chercherColisExistantParReference(String referenceColis);
 
-    Colis enregistrerColis(Colis colisPrisEnCharge);
+    Colis.ColisExistant enregistrerColis(Colis.ColisExistant colisPrisEnCharge);
 
-    Colis mettreAJourColis(Colis colisExistant);
+    Colis.ColisExistant mettreAJourColis(Colis.ColisExistant colisExistant);
 
-    List<Colis> listerColis();
+    List<Colis.ColisExistant> listerColis();
 }
