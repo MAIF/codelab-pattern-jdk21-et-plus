@@ -24,7 +24,7 @@ public class ColisController {
 
 
     @GetMapping
-    public List<Colis> listerColis() {
+    public List<Colis.ColisExistant> listerColis() {
         return this.livraisonDeColis.listerColis();
     }
 
