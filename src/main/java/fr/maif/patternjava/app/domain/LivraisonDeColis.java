@@ -1,17 +1,11 @@
 package fr.maif.patternjava.app.domain;
 
-import fr.maif.patternjava.app.domain.errors.ColisNonTrouve;
 import fr.maif.patternjava.app.domain.errors.EtatInvalide;
 import fr.maif.patternjava.app.domain.models.Colis;
-import fr.maif.patternjava.app.domain.models.TypeColis;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-
-import static fr.maif.patternjava.app.domain.models.TypeColis.*;
 
 @Component("LivraisonDeColisClassic")
 public class LivraisonDeColis {
@@ -26,18 +20,13 @@ public class LivraisonDeColis {
         return this.colisExistants.listerColis();
     }
 
-
     public Colis prendreEnChargeLeColis(Colis colis) throws EtatInvalide {
-//        if (colis.type().equals(TypeColis.NouveauColis)) {
-//            var reference = genererReference();
-//            return this.colisExistants.enregistrerColis(colis.toBuilder()
-//                    .reference(reference)
-//                    .type(ColisPrisEnCharge)
-//                    .build());
-//        } else {
-//            throw new EtatInvalide("Nouveau colis attendu");
-//        }
-        return colis;
+        if (colis instanceof Colis.NouveauColis nouveauColis) {
+            var reference = genererReference();
+            return this.colisExistants.enregistrerColis(nouveauColis.toColisPrisEnCharge(reference));
+        } else {
+            throw new EtatInvalide("Nouveau colis attendu");
+        }
     }
 
     public Colis gererColis(Colis colis) {

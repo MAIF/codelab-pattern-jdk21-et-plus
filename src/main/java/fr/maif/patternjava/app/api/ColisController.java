@@ -30,7 +30,7 @@ public class ColisController {
 
 
     @PostMapping
-    public ResponseEntity<Colis> prendreEnChargeLeColis(@RequestBody @Valid Colis colis) {
+    public ResponseEntity<Colis> prendreEnChargeLeColis(@RequestBody @Valid Colis.NouveauColis colis) {
         try {
             return ResponseEntity.ok(this.livraisonDeColis.prendreEnChargeLeColis(colis));
         } catch (ColisNonTrouve e) {
@@ -39,7 +39,7 @@ public class ColisController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid Colis colis) {
+    public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid Colis.ColisExistant colis) {
         try {
             return ResponseEntity.ok(this.livraisonDeColis.gererColis(colis));
         } catch (ColisNonTrouve e) {
