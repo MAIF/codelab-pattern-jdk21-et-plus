@@ -1,15 +1,37 @@
 package fr.maif.patternjava.app.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import lombok.Builder;
-import lombok.Data;
-
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(
+                value = Colis.NouveauColis.class,
+                name = "NouveauColis"
+        ),
+        @JsonSubTypes.Type(
+                value = Colis.ColisPrisEnCharge.class,
+                name = "ColisPrisEnCharge"
+        ),
+        @JsonSubTypes.Type(
+                value = Colis.ColisEnCoursDAcheminement.class,
+                name = "ColisEnCoursDAcheminement"
+        ),
+        @JsonSubTypes.Type(
+                value = Colis.ColisRecu.class,
+                name = "ColisRecu"
+        )}
+)
 public sealed interface Colis {
 
     sealed interface ColisExistant extends Colis {
