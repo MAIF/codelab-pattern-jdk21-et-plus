@@ -1,16 +1,16 @@
 package fr.maif.patternjava.app.domain;
 
-import fr.maif.patternjava.app.domain.models.Colis;
+import fr.maif.patternjava.app.domain.models.ColisOuErreur;
 
 import java.util.List;
 
 public interface ColisExistants {
 
-    Colis.ColisExistant chercherColisExistantParReference(String referenceColis);
+    ColisOuErreur.ColisExistant chercherColisExistantParReference(String referenceColis);
 
-    Colis.ColisExistant enregistrerColis(Colis.ColisExistant colisPrisEnCharge);
+    ColisOuErreur.ColisExistant enregistrerColis(ColisOuErreur.ColisExistant colisPrisEnCharge);
 
-    Colis.ColisExistant mettreAJourColis(Colis.ColisExistant colisExistant);
+    ColisOuErreur.ColisExistant mettreAJourColis(ColisOuErreur.ColisExistant colisExistant);
 
-    List<Colis.ColisExistant> listerColis();
+    List<ColisOuErreur.ColisExistant> listerColis();
 }

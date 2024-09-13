@@ -1,7 +1,7 @@
 package fr.maif.patternjava.app.domain.impl;
 
 import fr.maif.patternjava.app.domain.ColisExistants;
-import fr.maif.patternjava.app.domain.models.Colis;
+import fr.maif.patternjava.app.domain.models.ColisOuErreur;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,25 +10,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ColisExistantInMemory implements ColisExistants {
 
-    private final ConcurrentHashMap<String, Colis.ColisExistant> store = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ColisOuErreur.ColisExistant> store = new ConcurrentHashMap<>();
 
     @Override
-    public Colis.ColisExistant chercherColisExistantParReference(String referenceColis) {
+    public ColisOuErreur.ColisExistant chercherColisExistantParReference(String referenceColis) {
         return store.get(referenceColis);
     }
 
     @Override
-    public Colis.ColisExistant enregistrerColis(Colis.ColisExistant colisPrisEnCharge) {
+    public ColisOuErreur.ColisExistant enregistrerColis(ColisOuErreur.ColisExistant colisPrisEnCharge) {
         return store.compute(colisPrisEnCharge.reference(), (id, colisExistant) -> colisPrisEnCharge);
     }
 
     @Override
-    public Colis.ColisExistant mettreAJourColis(Colis.ColisExistant colis) {
+    public ColisOuErreur.ColisExistant mettreAJourColis(ColisOuErreur.ColisExistant colis) {
         return store.compute(colis.reference(), (id, colisExistant) -> colis);
     }
 
     @Override
-    public List<Colis.ColisExistant> listerColis() {
+    public List<ColisOuErreur.ColisExistant> listerColis() {
         return store.values().stream().toList();
     }
 }
