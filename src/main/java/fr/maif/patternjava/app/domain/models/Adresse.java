@@ -62,8 +62,7 @@ public sealed interface Adresse {
     }
 
     static String formatterLigneAdresse(String ligne) {
-        return ligne.toUpperCase()
-                .replaceAll("\\.", " ");
+        return ligne.replaceAll("\\.", " ");
     }
 
     record NoAppEtageCouloirEscalier(@JsonValue String value) {
