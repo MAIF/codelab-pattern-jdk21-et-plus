@@ -1,8 +1,10 @@
 package fr.maif.patternjava.app.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import fr.maif.patternjava.app.domain.LivraisonDeColis;
 import fr.maif.patternjava.app.domain.models.ColisOuErreur;
 import fr.maif.patternjava.app.domain.models.ColisOuErreur.ColisExistant;
+import fr.maif.patternjava.app.domain.models.Validation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
@@ -50,6 +52,13 @@ public class ColisController {
                 yield ResponseEntity.badRequest().body(problemDetail);
             }
         };
+    }
+
+    public record ErrorDTO(List<String> errors) {}
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorDTO> handleValidationException(Validation.ValidationException validationException) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(validationException.getErrors()));
     }
 
 }

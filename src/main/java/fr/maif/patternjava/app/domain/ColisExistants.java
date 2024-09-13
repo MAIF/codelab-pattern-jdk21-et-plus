@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ColisExistants {
 
-    ColisOuErreur.ColisExistant chercherColisExistantParReference(String referenceColis);
+    ColisOuErreur.ColisExistant chercherColisExistantParReference(ColisOuErreur.ReferenceColis referenceColis);
 
     ColisOuErreur.ColisExistant enregistrerColis(ColisOuErreur.ColisExistant colisPrisEnCharge);
 

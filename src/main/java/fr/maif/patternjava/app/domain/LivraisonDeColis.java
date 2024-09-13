@@ -36,7 +36,7 @@ public class LivraisonDeColis {
             case ColisExistant colisAGerer -> {
                 ColisExistant colisExistant = colisExistants.chercherColisExistantParReference(colisAGerer.reference());
                 if (Objects.isNull(colisExistant)) {
-                    yield new ColisNonTrouve(colisAGerer.reference());
+                    yield new ColisNonTrouve(colisAGerer.reference().value());
                 }
                 yield gererColisExistant(colisExistant, colisAGerer);
             }
@@ -66,7 +66,7 @@ public class LivraisonDeColis {
         return colisExistants.mettreAJourColis(colisEnCoursAGerer);
     }
 
-    private String genererReference() {
-        return UUID.randomUUID().toString();
+    private ReferenceColis genererReference() {
+        return new ReferenceColis(UUID.randomUUID().toString());
     }
 }

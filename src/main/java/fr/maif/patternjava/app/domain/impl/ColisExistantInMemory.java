@@ -10,10 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ColisExistantInMemory implements ColisExistants {
 
-    private final ConcurrentHashMap<String, ColisOuErreur.ColisExistant> store = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ColisOuErreur.ReferenceColis, ColisOuErreur.ColisExistant> store = new ConcurrentHashMap<>();
 
     @Override
-    public ColisOuErreur.ColisExistant chercherColisExistantParReference(String referenceColis) {
+    public ColisOuErreur.ColisExistant chercherColisExistantParReference(ColisOuErreur.ReferenceColis referenceColis) {
         return store.get(referenceColis);
     }
 
