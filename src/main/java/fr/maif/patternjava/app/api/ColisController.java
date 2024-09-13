@@ -39,7 +39,7 @@ public class ColisController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid Colis.ColisExistant colis) {
+    public ResponseEntity<?> gererLeColis(@PathVariable("id") String id, @RequestBody @Valid Colis colis) {
         try {
             return ResponseEntity.ok(this.livraisonDeColis.gererColis(colis));
         } catch (ColisNonTrouve e) {

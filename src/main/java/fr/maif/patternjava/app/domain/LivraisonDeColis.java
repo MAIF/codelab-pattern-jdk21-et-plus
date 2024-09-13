@@ -1,10 +1,13 @@
 package fr.maif.patternjava.app.domain;
 
+import fr.maif.patternjava.app.domain.errors.ColisNonTrouve;
 import fr.maif.patternjava.app.domain.errors.EtatInvalide;
 import fr.maif.patternjava.app.domain.models.Colis;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component("LivraisonDeColisClassic")
@@ -29,41 +32,33 @@ public class LivraisonDeColis {
         }
     }
 
+
     public Colis gererColis(Colis colis) {
-//        if (colis.type().equals(TypeColis.NouveauColis)) {
-//            throw new EtatInvalide("Le colis ne doit pas être un nouveau colis");
-//        } else {
-//            var colisExistant = this.colisExistants.chercherColisExistantParReference(colis.reference());
-//            if (Objects.isNull(colisExistant)) {
-//                throw new ColisNonTrouve(colis.reference());
-//            }
-//
-//            if ((colisExistant.type().equals(ColisPrisEnCharge) && colis.type().equals(ColisEnCoursDAcheminement)) ||
-//                (colisExistant.type().equals(ColisEnCoursDAcheminement) && colis.type().equals(ColisEnCoursDAcheminement)) ||
-//                (colisExistant.type().equals(ColisEnCoursDAcheminement) && colis.type().equals(ColisRecu))) {
-//
-//                if (colisExistant.type().equals(ColisPrisEnCharge) &&
-//                    colisExistant.dateDEnvoi().isBefore(LocalDateTime.now().minusMonths(1))) {
-//                    throw new EtatInvalide("La prise en charge date de plus d'1 mois");
-//                }
-//
-//                return this.colisExistants.mettreAJourColis(colis);
-//            }
-//            if (colisExistant.type().equals(ColisPrisEnCharge)) {
-//                throw new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\"");
-//            }
-//            if (colisExistant.type().equals(ColisEnCoursDAcheminement)) {
-//                throw new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\" ou \"ColisPrisEnCharge\"");
-//            }
-//            if (colisExistant.type().equals(ColisRecu)) {
-//                throw new EtatInvalide("Le colis est déjà reçu");
-//            }
-//            throw new EtatInvalide("Cas non géré");
-//        }
-        return colis;
+        return switch (colis) {
+            case Colis.NouveauColis nouveauColis -> throw new EtatInvalide("On attend un colis existant");
+            case Colis.ColisExistant colisAGerer -> {
+                Colis.ColisExistant colisExistant = colisExistants.chercherColisExistantParReference(colisAGerer.reference());
+                if (Objects.isNull(colisExistant)) {
+                    throw new ColisNonTrouve(colisAGerer.reference());
+                }
+                yield gererColisExistant(colisExistant, colisAGerer);
+            }
+        };
     }
 
+    Colis gererColisExistant(Colis.ColisExistant colisExistant, Colis.ColisExistant colisAGerer) {
+        record ExistantEtAGerer(Colis.ColisExistant colisExistant, Colis.ColisExistant colisAGerer) {}
 
+        return switch (new ExistantEtAGerer(colisExistant, colisAGerer)) {
+            case ExistantEtAGerer(Colis.ColisPrisEnCharge         colisPrisEnCharge, Colis.ColisEnCoursDAcheminement __) when colisPrisEnCharge.dateDEnvoi().isBefore(LocalDateTime.now().minusMonths(1)) -> throw new EtatInvalide("La prise en charge date de plus d'1 mois");
+            case ExistantEtAGerer(Colis.ColisPrisEnCharge         __, Colis.ColisEnCoursDAcheminement colisEnCoursAGerer) -> colisExistants.mettreAJourColis(colisEnCoursAGerer);
+            case ExistantEtAGerer(Colis.ColisEnCoursDAcheminement __, Colis.ColisEnCoursDAcheminement colisEnCoursAGerer) -> colisExistants.mettreAJourColis(colisEnCoursAGerer);
+            case ExistantEtAGerer(Colis.ColisEnCoursDAcheminement __, Colis.ColisRecu colisEnCoursAGerer) -> colisExistants.mettreAJourColis(colisEnCoursAGerer);
+            case ExistantEtAGerer(Colis.ColisPrisEnCharge         __, var ___) -> throw new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\"");
+            case ExistantEtAGerer(Colis.ColisEnCoursDAcheminement __, var ___) -> throw new EtatInvalide("On attend un colis à l'état \"ColisEnCoursDAcheminement\" ou \"ColisPrisEnCharge\"");
+            case ExistantEtAGerer(Colis.ColisRecu                 __, var ___) -> throw new EtatInvalide("Le colis est déja reçu");
+        };
+    }
 
     private String genererReference() {
         return UUID.randomUUID().toString();
