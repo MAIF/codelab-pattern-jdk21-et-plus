@@ -76,14 +76,14 @@ class PatternjavaApplicationTests {
 		assertThat(colisEnCoursDAcheminementResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisEnCoursDAcheminement.path("type").asText()).isEqualTo("ColisEnCoursDAcheminement");
 
-		String dateReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
 				{
 				      "reference": "%s",
 				      "type": "ColisRecu",
 				      "email": "jdusse@maif.fr",
 				      "dateDEnvoi": "%s",
-				      "dateReception": "%s",
+				      "dateDeReception": "%s",
 				      "adresse": {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
@@ -91,7 +91,7 @@ class PatternjavaApplicationTests {
 				          "pays": "79000 Niort"
 				      }
 				  }
-				""".formatted(reference, dateDEnvoi, dateReception))), JsonNode.class);
+				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
 
 		JsonNode colisRecu = colisRecuResponse.getBody();
 		System.out.println(colisRecu);
@@ -146,7 +146,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
-		String dateReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
 				{
@@ -154,7 +154,7 @@ class PatternjavaApplicationTests {
 				      "type": "ColisRecu",
 				      "email": "jdusse@maif.fr",
 				      "dateDEnvoi": "%s",
-				      "dateReception": "%s",
+				      "dateDeReception": "%s",
 				      "adresse": {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
@@ -162,7 +162,7 @@ class PatternjavaApplicationTests {
 				          "pays": "79000 Niort"
 				      }
 				  }
-				""".formatted(reference, dateDEnvoi, dateReception))), JsonNode.class);
+				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
 
 		JsonNode colisRecu = colisRecuResponse.getBody();
 		System.out.println(colisRecu);
@@ -192,7 +192,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
-		String dateReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
 				{
@@ -200,7 +200,7 @@ class PatternjavaApplicationTests {
 				      "type": "NouveauColis",
 				      "email": "jdusse@maif.fr",
 				      "dateDEnvoi": "%s",
-				      "dateReception": "%s",
+				      "dateDeReception": "%s",
 				      "adresse": {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
@@ -208,7 +208,7 @@ class PatternjavaApplicationTests {
 				          "pays": "79000 Niort"
 				      }
 				  }
-				""".formatted(reference, dateDEnvoi, dateReception))), JsonNode.class);
+				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
 
 		JsonNode colisRecu = colisRecuResponse.getBody();
 		System.out.println(colisRecu);
@@ -260,14 +260,14 @@ class PatternjavaApplicationTests {
 		assertThat(colisEnCoursDAcheminementResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisEnCoursDAcheminement.path("type").asText()).isEqualTo("ColisEnCoursDAcheminement");
 
-		String dateReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
 				{
 				      "reference": "%s",
 				      "type": "NouveauColis",
 				      "email": "jdusse@maif.fr",
 				      "dateDEnvoi": "%s",
-				      "dateReception": "%s",
+				      "dateDeReception": "%s",
 				      "adresse": {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
@@ -275,7 +275,7 @@ class PatternjavaApplicationTests {
 				          "pays": "79000 Niort"
 				      }
 				  }
-				""".formatted(reference, dateDEnvoi, dateReception))), JsonNode.class);
+				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
 
 		JsonNode colisRecu = colisRecuResponse.getBody();
 		System.out.println(colisRecu);
@@ -327,14 +327,14 @@ class PatternjavaApplicationTests {
 		assertThat(colisEnCoursDAcheminementResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisEnCoursDAcheminement.path("type").asText()).isEqualTo("ColisEnCoursDAcheminement");
 
-		String dateReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
 				{
 				      "reference": "%s",
 				      "type": "ColisPrisEnCharge",
 				      "email": "jdusse@maif.fr",
 				      "dateDEnvoi": "%s",
-				      "dateReception": "%s",
+				      "dateDeReception": "%s",
 				      "adresse": {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
@@ -342,7 +342,7 @@ class PatternjavaApplicationTests {
 				          "pays": "79000 Niort"
 				      }
 				  }
-				""".formatted(reference, dateDEnvoi, dateReception))), JsonNode.class);
+				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
 
 		JsonNode colisRecu = colisRecuResponse.getBody();
 		System.out.println(colisRecu);

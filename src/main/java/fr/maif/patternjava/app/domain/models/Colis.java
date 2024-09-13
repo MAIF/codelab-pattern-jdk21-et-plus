@@ -16,7 +16,7 @@ import java.util.Objects;
      public TypeColis type;
      @NotNull
      public LocalDateTime dateDEnvoi;
-     public LocalDateTime dateReception;
+     public LocalDateTime dateDeReception;
      public Double latitude;
      public Double longitude;
      @Email
@@ -24,11 +24,11 @@ import java.util.Objects;
      public String email;
      public Adresse adresse;
 
-     public Colis(String reference, TypeColis type, LocalDateTime dateDEnvoi, LocalDateTime dateReception, Double latitude, Double longitude, String email, Adresse adresse) {
+     public Colis(String reference, TypeColis type, LocalDateTime dateDEnvoi, LocalDateTime dateDeReception, Double latitude, Double longitude, String email, Adresse adresse) {
          this.reference = reference;
          this.type = type;
          this.dateDEnvoi = Objects.requireNonNullElse(dateDEnvoi, LocalDateTime.now());
-         this.dateReception = dateReception;
+         this.dateDeReception = dateDeReception;
          this.latitude = latitude;
          this.longitude = longitude;
          this.email = email;
