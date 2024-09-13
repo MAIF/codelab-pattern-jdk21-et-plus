@@ -1,9 +1,11 @@
 package fr.maif.patternjava;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.maif.patternjava.app.PatternjavaApplication;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,11 @@ class PatternjavaApplicationTests {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@BeforeEach
+	public void setUp() {
+		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+	}
+
 	@Test
 	void contextLoads() {
 	}
@@ -42,7 +49,8 @@ class PatternjavaApplicationTests {
 				         "type": "AdresseBtoC",
 				         "civiliteNomPrenom": "Jean Claude Dusse",
 				         "numeroLibelleVoie": "10 rue de la rue",
-				         "pays": "79000 Niort"
+				         "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				     }
 				 }
 				"""), JsonNode.class);
@@ -52,6 +60,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColisResponse.getStatusCode().value()).isEqualTo(200);
 		String reference = nouveauColis.path("reference").asText();
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
+		verifierAdresse(nouveauColis);
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisEnCoursDAcheminementResponse = restTemplate.exchange("/api/v1/colis/" + reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
@@ -66,7 +75,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi))), JsonNode.class);
@@ -75,6 +85,7 @@ class PatternjavaApplicationTests {
 		System.out.println(colisEnCoursDAcheminement);
 		assertThat(colisEnCoursDAcheminementResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisEnCoursDAcheminement.path("type").asText()).isEqualTo("ColisEnCoursDAcheminement");
+		verifierAdresse(colisEnCoursDAcheminement);
 
 		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
@@ -88,7 +99,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
@@ -97,6 +109,7 @@ class PatternjavaApplicationTests {
 		System.out.println(colisRecu);
 		assertThat(colisRecuResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisRecu.path("type").asText()).isEqualTo("ColisRecu");
+		verifierAdresse(colisRecu);
 	}
 
 
@@ -112,7 +125,8 @@ class PatternjavaApplicationTests {
 				         "type": "AdresseBtoC",
 				         "civiliteNomPrenom": "Jean Claude Dusse",
 				         "numeroLibelleVoie": "10 rue de la rue 10 rue de la rue 10 rue de la rue 10 rue de la rue 10 rue de la rue 10 rue de la rue 10 rue de la rue 10 rue de la rue",
-				         "pays": "79000 Niort"
+				         "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				     }
 				 }
 				"""), JsonNode.class);
@@ -134,7 +148,8 @@ class PatternjavaApplicationTests {
 				         "type": "AdresseBtoC",
 				         "civiliteNomPrenom": "Jean Claude Dusse",
 				         "numeroLibelleVoie": "10 rue de la rue",
-				         "pays": "79000 Niort"
+				         "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				     }
 				 }
 				"""), JsonNode.class);
@@ -144,6 +159,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColisResponse.getStatusCode().value()).isEqualTo(200);
 		String reference = nouveauColis.path("reference").asText();
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
+		verifierAdresse(nouveauColis);
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
@@ -159,7 +175,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
@@ -180,7 +197,8 @@ class PatternjavaApplicationTests {
 				         "type": "AdresseBtoC",
 				         "civiliteNomPrenom": "Jean Claude Dusse",
 				         "numeroLibelleVoie": "10 rue de la rue",
-				         "pays": "79000 Niort"
+				         "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				     }
 				 }
 				"""), JsonNode.class);
@@ -190,6 +208,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColisResponse.getStatusCode().value()).isEqualTo(200);
 		String reference = nouveauColis.path("reference").asText();
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
+		verifierAdresse(nouveauColis);
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
@@ -205,7 +224,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
@@ -226,7 +246,8 @@ class PatternjavaApplicationTests {
 				         "type": "AdresseBtoC",
 				         "civiliteNomPrenom": "Jean Claude Dusse",
 				         "numeroLibelleVoie": "10 rue de la rue",
-				         "pays": "79000 Niort"
+				         "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				     }
 				 }
 				"""), JsonNode.class);
@@ -236,6 +257,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColisResponse.getStatusCode().value()).isEqualTo(200);
 		String reference = nouveauColis.path("reference").asText();
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
+		verifierAdresse(nouveauColis);
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisEnCoursDAcheminementResponse = restTemplate.exchange("/api/v1/colis/" + reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
@@ -250,7 +272,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi))), JsonNode.class);
@@ -259,6 +282,7 @@ class PatternjavaApplicationTests {
 		System.out.println(colisEnCoursDAcheminement);
 		assertThat(colisEnCoursDAcheminementResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisEnCoursDAcheminement.path("type").asText()).isEqualTo("ColisEnCoursDAcheminement");
+		verifierAdresse(colisEnCoursDAcheminement);
 
 		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
@@ -272,7 +296,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
@@ -293,7 +318,8 @@ class PatternjavaApplicationTests {
 				         "type": "AdresseBtoC",
 				         "civiliteNomPrenom": "Jean Claude Dusse",
 				         "numeroLibelleVoie": "10 rue de la rue",
-				         "pays": "79000 Niort"
+				         "codePostalEtLocaliteOuCedex": "79000 Niort",
+				         "pays": "France"
 				     }
 				 }
 				"""), JsonNode.class);
@@ -303,6 +329,7 @@ class PatternjavaApplicationTests {
 		assertThat(nouveauColisResponse.getStatusCode().value()).isEqualTo(200);
 		String reference = nouveauColis.path("reference").asText();
 		assertThat(nouveauColis.path("type").asText()).isEqualTo("ColisPrisEnCharge");
+		verifierAdresse(nouveauColis);
 
 		String dateDEnvoi = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisEnCoursDAcheminementResponse = restTemplate.exchange("/api/v1/colis/" + reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
@@ -317,7 +344,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi))), JsonNode.class);
@@ -326,6 +354,7 @@ class PatternjavaApplicationTests {
 		System.out.println(colisEnCoursDAcheminement);
 		assertThat(colisEnCoursDAcheminementResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(colisEnCoursDAcheminement.path("type").asText()).isEqualTo("ColisEnCoursDAcheminement");
+		verifierAdresse(colisEnCoursDAcheminement);
 
 		String dateDeReception = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 		ResponseEntity<JsonNode> colisRecuResponse = restTemplate.exchange("/api/v1/colis/"+reference, HttpMethod.PUT, new HttpEntity<>(objectMapper.readTree("""
@@ -339,7 +368,8 @@ class PatternjavaApplicationTests {
 				          "type": "AdresseBtoC",
 				          "civiliteNomPrenom": "Jean Claude Dusse",
 				          "numeroLibelleVoie": "10 rue de la rue",
-				          "pays": "79000 Niort"
+				          "codePostalEtLocaliteOuCedex": "79000 Niort",
+				          "pays": "France"
 				      }
 				  }
 				""".formatted(reference, dateDEnvoi, dateDeReception))), JsonNode.class);
@@ -347,6 +377,19 @@ class PatternjavaApplicationTests {
 		JsonNode colisRecu = colisRecuResponse.getBody();
 		System.out.println(colisRecu);
 		assertThat(colisRecuResponse.getStatusCode().value()).isEqualTo(400);
+	}
+
+	public void verifierAdresse(JsonNode colis) throws JsonProcessingException {
+		var expected = objectMapper.readTree("""
+					{
+					  "type": "AdresseBtoC",
+					  "civiliteNomPrenom": "Jean Claude Dusse",
+					  "numeroLibelleVoie": "10 rue de la rue",
+					  "codePostalEtLocaliteOuCedex": "79000 Niort",
+					  "pays": "France"
+					}
+			 		""");
+		assertThat(colis.path("adresse")).isEqualTo(expected);
 	}
 
 }

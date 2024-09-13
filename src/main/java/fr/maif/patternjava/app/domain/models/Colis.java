@@ -1,5 +1,6 @@
 package fr.maif.patternjava.app.domain.models;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,7 @@ import java.util.Objects;
      @Email
      @NotNull
      public String email;
-     public Adresse adresse;
+     public @Valid Adresse adresse;
 
      public Colis(String reference, TypeColis type, LocalDateTime dateDEnvoi, LocalDateTime dateDeReception, Double latitude, Double longitude, String email, Adresse adresse) {
          this.reference = reference;
