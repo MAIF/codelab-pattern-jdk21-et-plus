@@ -401,11 +401,18 @@ classDiagram
 Comme il est maintenant possible de séparer les cas `Colis` et `ColisExistant`, le repository `ColisExistants` peut être adapté pour gérer que des `ColisExistant`.  
 
 
-### Etape 4 : adapter le service LivraisonDeColis
+### Etape 4 : adapter le service LivraisonDeColis pour les nouveaux Colis 
 
 Plus rien ne compile ! Ou alors avec des lignes en commentaires
 
-Adapter le service pour gérer cette nouvelle hierarchie de classes. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas.
+Pour commencer, on va refactorer la méthode `prendreEnChargeLeColis`. 
+
+Si le colis est un `NouveauColis`, il faut le persister, sinon il faut lever une exception. 
+
+
+### Etape 5 : adapter le service LivraisonDeColis pour les colis existants
+
+On va maintenant adapter la méthode `gererColis`. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas.
 
 Les régles sont les suivantes :
  * Sur le POST : création d'un colis, le type de colis doit être `NouveauColis` 
@@ -419,12 +426,32 @@ Les régles sont les suivantes :
      * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement` et que la date d'envoi a dépassé 1 mois, dans ce cas il faut lever une erreur.
      * dans les autres cas : la demande est invalide 
 
+**Tips :**
 
-### Etape 5 : alternative aux exceptions
+Comme vu dans la présentation des nouveautés du jdk, il est possible de déclarer un record à la volée pour l'utiliser dans un switch. Ceci peut être utilisé pour comparer l'entrée venant de la base avec la donnée utilisateur :
 
-Et si les erreurs étaient aussi un état du colis. Modifier la hierarchie de classe pour intégrer les erreurs. Il faudra refactorer le controller pour gérer proprement les erreurs.
+```java
+void switchMethode() {
+    // Il est possible de déclarer un record à l'intérieur d'une méthode 
+    record Jai2Animaux(Animal animal1, Animal animal2) { }
 
-### Etape 6 : Validation par des types dédiés
+    Animal animal2 = new Animal.Chien("Medor", 5);
+
+// Ici le compilateur va vérifier tous les cas : 
+    String cas = switch (new Jai2Animaux(animal, animal2)) {
+        case Jai2Animaux(Animal.Chien chien1, Animal.Chien chien2) -> "J'ai 2 chiens";
+        case Jai2Animaux(Animal.Chat chat1, Animal.Chat chat2) -> "J'ai 2 chat";
+        case Jai2Animaux(Animal.Chien chien1, Animal.Chat chat2) -> "J'ai 1 chien et 1 chat";
+        case Jai2Animaux(Animal.Chat chat1, Animal.Chien chien2) -> "J'ai 1 chien et 1 chat";
+    };
+}
+```
+
+### Etape 6 : alternative aux exceptions
+
+Et si les erreurs étaient aussi un état du colis. Modifier la hiérarchie de classe pour intégrer les erreurs. Il faudra refactorer le controller pour gérer proprement les erreurs.
+
+### Etape 7 : Validation par des types dédiés
 
 Dans cette approche, on remplace les annotations "bean validation" par un type dédié et des validations dans le constructeur. 
 
