@@ -2,11 +2,11 @@
 
 ## Les nouveautés du jdk 
 
-Le jdk 21 introduit de nouvelles fonctionnalités (record, sealed class, pattern matching) qui comme les generic ou les lambda vont impacter la façon de developper en java. 
+Le jdk 21 introduit de nouvelles fonctionnalités (record, sealed class, pattern matching) qui comme les generic ou les lambda vont impacter la façon de développer en java. 
 
-Ce workshop permet de prendre en main ces nouvelles fonctionnalités et de les mettres en oeuvre à travers des cas pratiques. 
+Ce workshop permet de prendre en main ces nouvelles fonctionnalités et de les mettre en œuvre à travers des cas pratiques. 
 
-Pendant 3 heures, nous allons refactorer une application en utilisant ces nouveaux patterns pour rendre le code plus robuste et profiter un peu plus de l'aide du compilateur java. 
+Pendant 3 heures, nous allons refactorer une application en utilisant ces nouveaux patterns pour rendre le code plus robuste, et profiter un peu plus de l'aide du compilateur java. 
 
 
 ### Les records 
@@ -24,7 +24,7 @@ Il est également possible de faire des choses à la construction de l'instance
 
 ```java
 record Chien(String nom, Integer age) {
-    public Chien { // ici on est pas obligé de rappeler les attributs 
+    public Chien { // ici, on n'est pas obligé de rappeler les attributs 
         nom = Objects.requireNonNullElse(nom, "Médor");
         Objects.requireNonNull(age, "l'age est obligatoire");
     }
@@ -36,7 +36,7 @@ record Chien(String nom, Integer age) {
 }
 ```
 
-Le record est immutable (les attributs sont final). Pour modifier un attribut il faudra créer une nouvelle instance : 
+Le record est immutable (les attributs sont finals). Pour modifier un attribut, il faudra créer une nouvelle instance : 
 
 ```java
 record Chien(String nom, Integer age) {
@@ -70,13 +70,13 @@ sealed interface Animal permits Animal.Chien, Animal.Chat {
     record Chat(String nom) implements Animal {}
 }
 ```
-Dans cet exemple `permits` pourrait être homis car les sous classes sont dans le même fichier. 
+Dans cet exemple `permits` pourrait être omis car les sous classes sont dans le même fichier. 
 
 Les sealed classes viennent avec quelques contraintes :
 * les sous classes doivent être dans la même classe ou le même package 
 * les sous classes doivent être des classes finales (le record est final)
 
-Il est possible de définir une hierarchie en utilisant les classes abstraites ou les interfaces. 
+Il est possible de définir une hiérarchie en utilisant les classes abstraites ou les interfaces. 
 
 ```java
 sealed interface Animal  {
@@ -125,7 +125,7 @@ void ifMethode() {
 }
 ```
 
-Mais on peut aller plus loins en ajoutant des tests supplémentaire sur l'instance qui a été casté 
+Mais on peut aller plus loins en ajoutant des tests supplémentaires sur l'instance qui a été casté 
 
 ```java
 void ifMethode() {
@@ -135,7 +135,7 @@ void ifMethode() {
 }
 ```
 
-On peut également "destructurer" des records avec le "Record pattern" en plus de tester leur type 
+On peut également "déstructurer" des records avec le "Record pattern" en plus de tester leur type 
 
 ```java
 void ifMethode() {
@@ -147,7 +147,7 @@ void ifMethode() {
 
 ##### le if et les classes scellées 
 
-La ou les classes scellées deviennent vraiment intéressantes c'est en les utilisant avec un if. En effet le compilateur va tester l'exhaustivité des cas et le else ne sera plus nécessaire. 
+La ou les classes scellées deviennent vraiment intéressantes, c'est en les utilisant avec un if. En effet, le compilateur va tester l'exhaustivité des cas et le else ne sera plus nécessaire. 
 
 ```java
 void ifMethode() {
@@ -159,7 +159,7 @@ void ifMethode() {
 }
 ```
 
-Un des problèmes du if c'est que ça n'est pas une expression, on ne peut donc pas faire : 
+Un des problèmes du if, c'est que ça n'est pas une expression, on ne peut donc pas faire : 
 
 ```java
 void ifMethode() {
@@ -187,9 +187,9 @@ void switchMethode() {
 ```
 Le switch est une expression, on peut donc affecter le résultat à une variable. 
 
-Comme pour le if, on peut destructurer des records et le compilateur peut checker l'exhaustivité des cas pour les sealed class. 
+Comme pour le if, on peut déstructurer des records et le compilateur peut checker l'exhaustivité des cas pour les sealed class. 
 
-On peut egalement tester des conditions supplémentaires en utilisant le "guard pattern" avec le mot clé when. 
+On peut également tester des conditions supplémentaires en utilisant le "guard pattern" avec le mot clé when. 
 
 Si le cas à traiter se fait sur plusieurs lignes, il faudra utiliser `yield`et non `return` pour retourner un résultat. 
 
@@ -244,7 +244,7 @@ List<Animal.Chien> chiens = animals
 
 Voici une autre astuce pour pouvoir utiliser le switch avec un `Optional`. 
 
-D'abord on va créer un petit utilitaire : 
+D'abord, on va créer un petit utilitaire : 
 
 ```java
 public sealed interface Opt<T> {
@@ -252,7 +252,7 @@ public sealed interface Opt<T> {
     record Empty<T>() implements Opt<T> {}
 }
 ```
-Ici on vient de créer une sealed interface qui prend 2 valeurs : Present ou Vide. 
+Ici, on vient de créer une sealed interface qui prend 2 valeurs : Present ou Vide. 
 
 On va ensuite s'équiper d'une factory à partir d'un optional : 
 ```java
@@ -261,7 +261,7 @@ public static <T> Opt<T> opt(Optional<T> optional) {
 }
 ```
 
-Maintenant on peut écrire ce code : 
+Maintenant, on peut écrire ce code : 
 
 ```java
 Optional<String> stringOrVide = Optional.of("C'est pas vide");
@@ -295,21 +295,21 @@ public class Colis {
 }
 ```
 
-Le but et de réécrire le Colis sous la forme d'une interface scellée représentant tous les états possible. 
+Le but est de réécrire le Colis sous la forme d'une interface scellée représentant tous les états possibles. 
 
 Il faudra ensuite adapter et refactorer le service `LivraisonDeColis` pour prendre en compte ce nouveau design de classe.  
 
 Le code a refactorer se trouve dans le package `fr.maif.patternjava.app`.
 
 
-### Etape 1 : utilisation des records 
+### Étape 1 : utilisation des records 
 
 Transformer la class `Colis` en `record`. 
 La validation sera fait iso avec les annotations. Des valeurs par défaut peuvent être mise dans le constructeur si besoin. 
 
-### Etape 2 : refactorer l'adresse
+### Étape 2 : refactorer l'adresse
 
-On voit que l'adresse est soit AdresseBtoB soit AdresseBtoC. L'adresse peut donc être réécrite avec une sealed interface et des records.  
+On voit que l'adresse est soit AdresseBtoB, soit AdresseBtoC. L'adresse peut donc être réécrite avec une sealed interface et des records.  
 
 Adresse B2B :
  * raisonSocialeOuDenomination : non null, taille 38
@@ -356,7 +356,7 @@ Pour faire avec Jackson, on utilisera les annotations `@JsonTypeInfo` et `@JsonS
 
 ### Etape 3 : refactorer le colis 
 
-A l'image de l'adresse, on voit le colis a plusieurs états. Refactorer le colis avec une hierarchie de sealed interface et de records. 
+À l'image de l'adresse, on voit que le colis a plusieurs états. Le but : refactorer le colis avec une hiérarchie de sealed interface et de records. 
 
 Les règles de gestion sur le colis : 
  * NouveauColis : email et adresse non null, adresse valide 
@@ -364,7 +364,7 @@ Les règles de gestion sur le colis :
  * ColisEnCoursDAcheminement : reference, email, adresse, date d'envoi et latitude / longitude non null, adresse valide
  * ColisRecu : reference, email, adresse, date d'envoi et date de reception non null, adresse valide
 
-A cette étape, vous pouvez mettre en commentaire le contenu des méthodes `prendreEnChargeLeColis` et `gererColis` : 
+À cette étape, vous pouvez mettre en commentaire le contenu des méthodes `prendreEnChargeLeColis` et `gererColis` : 
 
 ```java
 public Colis prendreEnChargeLeColis(Colis colis) throws EtatInvalide {
@@ -401,7 +401,7 @@ classDiagram
 Comme il est maintenant possible de séparer les cas `Colis` et `ColisExistant`, le repository `ColisExistants` peut être adapté pour gérer que des `ColisExistant`.  
 
 
-### Etape 4 : adapter le service LivraisonDeColis pour les nouveaux Colis 
+### Étape 4 : adapter le service LivraisonDeColis pour les nouveaux Colis 
 
 Plus rien ne compile ! Ou alors avec des lignes en commentaires
 
@@ -410,11 +410,11 @@ Pour commencer, on va refactorer la méthode `prendreEnChargeLeColis`.
 Si le colis est un `NouveauColis`, il faut le persister, sinon il faut lever une exception. 
 
 
-### Etape 5 : adapter le service LivraisonDeColis pour les colis existants
+### Étape 5 : adapter le service LivraisonDeColis pour les colis existants
 
 On va maintenant adapter la méthode `gererColis`. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas.
 
-Les régles sont les suivantes :
+Les règles sont les suivantes :
  * Sur le POST : création d'un colis, le type de colis doit être `NouveauColis` 
  * Sur le PUT : modification d'un colis :
    * le type de colis ne pas doit être `NouveauColis`
@@ -423,7 +423,7 @@ Les régles sont les suivantes :
      * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement`
      * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisEnCoursDAcheminement`
      * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisRecu`
-     * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement` et que la date d'envoi a dépassé 1 mois, dans ce cas il faut lever une erreur.
+     * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement` et que la date d'envoi a dépassé 1 mois, dans ce cas, il faut lever une erreur.
      * dans les autres cas : la demande est invalide 
 
 **Tips :**
@@ -447,7 +447,7 @@ void switchMethode() {
 }
 ```
 
-### Etape 6 : alternative aux exceptions
+### Étape 6 : alternative aux exceptions
 
 Et si les erreurs étaient aussi un état du colis. Modifier la hiérarchie de classe pour intégrer les erreurs. Il faudra refactorer le controller pour gérer proprement les erreurs.
 
