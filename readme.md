@@ -364,7 +364,7 @@ Les règles de gestion sur le colis :
  * ColisEnCoursDAcheminement : reference, email, adresse, date d'envoi et latitude / longitude non null, adresse valide
  * ColisRecu : reference, email, adresse, date d'envoi et date de reception non null, adresse valide
 
-À cette étape, vous pouvez mettre en commentaire le contenu des méthodes `prendreEnChargeLeColis` et `gererColis` : 
+À cette étape, vous pouvez mettre en commentaire le contenu des méthodes `prendreEnChargeLeColis` et `gererColis` dans la classe LivraisonDeColis : 
 
 ```java
 public Colis prendreEnChargeLeColis(Colis colis) throws EtatInvalide {
