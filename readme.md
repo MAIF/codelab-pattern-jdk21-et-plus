@@ -415,16 +415,15 @@ Si le colis est un `NouveauColis`, il faut le persister, sinon il faut lever une
 On va maintenant adapter la méthode `gererColis`. Pourquoi ne pas utiliser un `switch` pour valider la cohérence des cas.
 
 Les règles sont les suivantes :
- * Sur le POST : création d'un colis, le type de colis doit être `NouveauColis` 
- * Sur le PUT : modification d'un colis :
-   * le type de colis ne pas doit être `NouveauColis`
-   * un colis doit exister pour cette référence
-   * la maj est possible si le 
-     * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement`
-     * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisEnCoursDAcheminement`
-     * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisRecu`
-     * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement` et que la date d'envoi a dépassé 1 mois, dans ce cas, il faut lever une erreur.
-     * dans les autres cas : la demande est invalide 
+
+* le type de colis ne pas doit être `NouveauColis`
+* un colis doit exister pour cette référence
+* la maj est possible si le 
+    * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement`
+    * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisEnCoursDAcheminement`
+    * colis existant est `ColisEnCoursDAcheminement` et le colis a maj est `ColisRecu`
+    * colis existant est `ColisPrisEnCharge` et le colis a maj est `ColisEnCoursDAcheminement` et que la date d'envoi a dépassé 1 mois, dans ce cas, il faut lever une erreur.
+    * dans les autres cas : la demande est invalide 
 
 **Tips :**
 
